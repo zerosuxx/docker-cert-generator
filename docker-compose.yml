@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./certs:/home/app/certs
+      - ./generate-cert.sh:/usr/local/bin/generate-cert
