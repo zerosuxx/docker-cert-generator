@@ -1,5 +1,5 @@
-#!/bin/bash
-# version 0.1.0
+#!/usr/bin/env bash
+# version 0.1.1
 
 #   ca.{crt,key}          Self signed CA certificate.
 #   generic.{crt,key}     A certificate with no key usage/policy restrictions.
@@ -7,19 +7,19 @@
 #   server.{crt,key}      A certificate restricted for SSL server usage.
 
 generate_cert() {
-    local fileName="$1"
-    local orgName="$2"
+    local file_name="$1"
+    local org_name="$2"
     local cn="$3"
     local opts="$4"
 
-    local keyFile=${fileName}.key
-    local certFile=${fileName}.crt
+    local key_file=${file_name}.key
+    local cert_file=${file_name}.crt
 
-    openssl genrsa -out "$keyFile" 2048
+    openssl genrsa -out "$key_file" 2048
     openssl req \
         -new -sha256 \
-        -subj "/O=$orgName/CN=$cn" \
-        -key "$keyFile" | \
+        -subj "/O=$org_name/CN=$cn" \
+        -key "$key_file" | \
         openssl x509 \
             -req -sha256 \
             -CA ca.crt \
@@ -27,7 +27,7 @@ generate_cert() {
             -CAserial ca.txt \
             -CAcreateserial \
             -days 365 \
-            -out "$certFile" \
+            -out "$cert_file" \
             $opts
 }
 
@@ -50,9 +50,9 @@ if [ -z "$ALT_NAMES" ]; then
   read -r ALT_NAMES
 fi
 
-altNames="${ALT_NAMES//,/
+alt_names="${ALT_NAMES//,/
 }"
-CONF_DIR=/home/app
+CONF_DIR=$HOME
 
 cat > "$CONF_DIR/openssl.cnf" <<EOF
 [ server_cert ]
@@ -68,7 +68,7 @@ subjectAltName=@alt_names
 
 [alt_names]
 DNS=$COMMON_NAME
-$altNames
+$alt_names
 EOF
 
 openssl genrsa -out ca.key 4096

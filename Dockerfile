@@ -14,4 +14,4 @@ RUN mkdir ~/certs
 
 WORKDIR /home/app/certs
 
-CMD ["/usr/local/bin/generate-cert"]
+ENTRYPOINT ["/usr/local/bin/generate-cert"]
